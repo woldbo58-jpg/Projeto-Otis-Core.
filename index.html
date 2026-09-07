@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTIS Core • Digital Twin & Predictive Maintenance</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Dependências 3D Babylon.js -->
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+</head>
+<body>
+
+    <!-- HUD Superior -->
+    <header id="hud-top">
+        <h2>OTIS Core • Telemetria IoT</h2>
+        <p class="sub">Operador de Portas & Eixo Vertical</p>
+
+        <div class="status-box">
+            <span>Posição da Cabine:</span>
+            <strong id="status-label" class="status-connecting">Conectando...</strong>
+        </div>
+
+        <div class="telemetry-indicator" id="telemetry-box">
+            <span class="dot" id="sensor-dot"></span>
+            <span id="telemetry-label">Status RUL: 100% (Nominal)</span>
+        </div>
+    </header>
+
+    <!-- Badge do Component Viewer (Tela 2) -->
+    <div id="bearing-overlay-badge" aria-live="polite">
+        <span class="dot anomaly"></span>
+        <span>INSPEÇÃO DETALHADA: OPERADOR DE PORTA & SENSOR IoT</span>
+        <button type="button" class="action-btn btn-close-badge" id="btn-close-inspection">
+            ✕ Fechar Inspeção
+        </button>
+    </div>
+
+    <!-- Barra de Controle Inferior (Tela 1) -->
+    <nav id="bottom-bar">
+        <button type="button" class="action-btn" id="btn-up" disabled>Subir ▲</button>
+        <button type="button" class="action-btn" id="btn-down" disabled>Descer ▼</button>
+        <div class="separator" role="separator"></div>
+        <button type="button" class="action-btn anomaly-btn" id="btn-anomaly">Simular Falha Operador ⚠️</button>
+    </nav>
+
+    <!-- Painel Lateral de Diagnóstico Preditivo (Tela 2) -->
+    <aside id="diagnostic-panel">
+        <div>
+            <h2 class="title-warning">Diagnóstico P-F • Operador</h2>
+            <p class="sub mb-0">Anomalia em Alta Frequência (HFA)</p>
+        </div>
+
+        <div class="diag-card">
+            <h3>Componente Inspecionado</h3>
+            <div class="card-highlight">Roldana do Operador de Porta</div>
+            <div class="text-danger mt-1">Pitting na pista interna + folga radial</div>
+        </div>
+
+        <div class="diag-card">
+            <h3>Assinatura Espectral (Sensor IoT)</h3>
+            <div class="wave-container">
+                <canvas id="waveCanvas"></canvas>
+            </div>
+        </div>
+
+        <div class="grid-2col">
+            <div class="diag-card">
+                <h3>RUL Estimado</h3>
+                <div class="diag-metric">14 <span>dias</span></div>
+            </div>
+            <div class="diag-card">
+                <h3>Vibração RMS</h3>
+                <div class="diag-metric">4.8 <span>m/s²</span></div>
+            </div>
+        </div>
+
+        <div class="diag-card text-note">
+            <strong class="text-accent">Diagnóstico Otis ONE:</strong> O acelerômetro piezoelétrico detectou impulsos repetitivos característicos da passagem das esferas sobre micro-fraturas na pista.
+        </div>
+
+        <div class="panel-actions">
+            <button type="button" class="action-btn w-full justify-center" id="btn-replay-fault">Replay Abertura c/ Falha ⟳</button>
+            <button type="button" class="action-btn btn-secondary w-full justify-center" id="btn-back-overview">Voltar à Visão Geral</button>
+            <button type="button" class="action-btn btn-info w-full justify-center" id="btn-go-schedule">Analisar Janela de Manutenção ➔</button>
+        </div>
+    </aside>
+
+    <!-- Painel Esquerdo: Análise de Tráfego & Despacho (Tela 3) -->
+    <aside id="schedule-panel">
+        <div>
+            <h2 class="title-primary">Análise de Tráfego & Despacho</h2>
+            <p class="sub mb-0">Otimização de Indisponibilidade • Otis ONE</p>
+        </div>
+
+        <div class="diag-card">
+            <h3>Padrão de Ocupação da Cabine (Média Semanal)</h3>
+            <div class="traffic-chart-container" id="trafficChart"></div>
+            <div class="chart-legend">
+                <span>🔴 Pico: 08h-10h | 17h-19h</span>
+                <span>🟢 Janela Ociosa: 01h-05h</span>
+            </div>
+        </div>
+
+        <div class="window-card">
+            <h3>Janela Ótima Recomendada</h3>
+            <div class="window-time">02:30 às 04:00 AM</div>
+            <p class="window-desc">
+                Impacto Operacional: <strong>0.2%</strong> (Demanda residual do edifício). Estimativa de intervenção: <strong>45 min</strong>.
+            </p>
+        </div>
+
+        <div class="diag-card">
+            <h3>Resumo da Ação</h3>
+            <ul class="action-summary-list">
+                <li>Item: Kit Roldana Operador Sup. (Part #OT-4428)</li>
+                <li>Ordem de Serviço Preditiva pré-aprovada</li>
+                <li>Técnico notificado via despacho automático Otis ONE</li>
+            </ul>
+        </div>
+
+        <div class="panel-actions">
+            <button type="button" class="action-btn btn-success w-full justify-center" id="btn-confirm-order">
+                Confirmar Ordem de Serviço ✓
+            </button>
+            <button type="button" class="action-btn btn-secondary w-full justify-center" id="btn-back-diag">
+                ⬅ Voltar ao Diagnóstico
+            </button>
+        </div>
+    </aside>
+
+    <canvas id="renderCanvas"></canvas>
+
+    <script src="app.js"></script>
+</body>
+</html>

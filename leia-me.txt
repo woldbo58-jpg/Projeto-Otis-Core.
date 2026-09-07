@@ -1,0 +1,25 @@
+# OTIS Core • Digital Twin & Predictive Maintenance 🚀
+
+Protótipo funcional de Digital Twin para monitoramento preditivo e despacho inteligente de elevadores, desenvolvido para o Challenge FIAP em parceria com a Otis.
+
+O sistema simula em tempo real a captura de telemetria IoT (acelerometria e vibração) no operador de portas, aplicando os conceitos de Curva P-F para prever falhas mecânicas e otimizar janelas de manutenção com base no tráfego preditivo do edifício.
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+* **WebGL / 3D Engine:** Babylon.js (v7.x)
+* **Modelagem 3D:** Blender 4.x (Exportação glTF/GLB)
+* **Frontend:** HTML5, CSS3 moderno (Glassmorphism), JavaScript Vanilla
+* **Visualização de Dados:** Canvas API (Osciloscópio procedural de vibração e gráfico de densidade de tráfego)
+
+---
+
+## ⚡ Como Rodar Localmente (Passo a Passo)
+
+Devido às políticas de segurança do navegador (CORS) para carregamento de modelos 3D (`.glb`), o projeto precisa rodar sob um servidor local.
+
+1. Abra o arquivo "iniciar.bat", ele vai iniciar o servidor.
+2. Abra seu navegador e digite:http://localhost:8000
+
+ 
